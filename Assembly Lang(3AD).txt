@@ -1,39 +1,62 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
-int main() {
-    int n, i;
-    char line[10][100];
-    char lhs[20], a[20], b[20], op;
-
-    printf("Enter number of instructions: ");
-    scanf("%d", &n);
-    getchar();
-
-    printf("Enter Three Address Code:\n");
-
-    for (i = 0; i < n; i++) {
-        fgets(line[i], sizeof(line[i]), stdin);
+void generateAssembly(char op, char arg1[],
+                      char arg2[], char result[])
+{
+    if (op == '+')
+    {
+        printf("MOV R0, %s\n", arg1);
+        printf("ADD R0, %s\n", arg2);
+        printf("MOV %s, R0\n", result);
     }
+    else if (op == '-')
+    {
+        printf("MOV R0, %s\n", arg1);
+        printf("SUB R0, %s\n", arg2);
+        printf("MOV %s, R0\n", result);
+    }
+    else if (op == '*')
+    {
+        printf("MOV R0, %s\n", arg1);
+        printf("MUL R0, %s\n", arg2);
+        printf("MOV %s, R0\n", result);
+    }
+    else if (op == '/')
+    {
+        printf("MOV R0, %s\n", arg1);
+        printf("DIV R0, %s\n", arg2);
+        printf("MOV %s, R0\n", result);
+    }
+    else
+    {
+        printf("Unsupported operator: %c\n", op);
+    }
+}
 
-    printf("\nAssembly Code:\n");
+int main()
+{
+    char line[100];
+    char result[10], arg1[10], arg2[10], op;
 
-    for (i = 0; i < n; i++) {
-        if (sscanf(line[i], "%19s = %19s %c %19s",
-                   lhs, a, &op, b) == 4) {
-            printf("MOV R0, %s\n", a);
+    printf("Enter three address code (end with 'exit'):\n");
 
-            switch (op) {
-                case '+': printf("ADD R0, %s\n", b); break;
-                case '-': printf("SUB R0, %s\n", b); break;
-                case '*': printf("MUL R0, %s\n", b); break;
-                case '/': printf("DIV R0, %s\n", b); break;
-            }
+    while (1)
+    {
+        fgets(line, sizeof(line), stdin);
 
-            printf("MOV %s, R0\n", lhs);
+        if (strncmp(line, "exit", 4) == 0)
+            break;
+
+        if (sscanf(line, "%9s = %9s %c %9s",
+                   result, arg1, &op, arg2) == 4)
+        {
+            generateAssembly(op, arg1, arg2, result);
         }
-        else if (sscanf(line[i], "%19s = %19s", lhs, a) == 2) {
-            printf("MOV %s, %s\n", lhs, a);
+        else
+        {
+            printf("Invalid TAC format. Use: result = arg1 op arg2\n");
         }
     }
 
